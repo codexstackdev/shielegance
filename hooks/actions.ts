@@ -1,0 +1,36 @@
+export function getQuotes() {
+  const quotes = [
+    "Some feelings deserve more than a simple text.",
+    "A 'good morning' text is nice. A love letter is proof.",
+    "Love isn't loud. It's the effort you put into being remembered.",
+    "If it crossed your mind more than once, it deserves more than one line.",
+    "Texts get left on read. Letters get kept forever.",
+    "Say it before it becomes a memory you wish you'd shared.",
+    "Not everything you feel needs to fit in a chat bubble.",
+    "The right words, at the right time, can outlive the moment itself.",
+    "Love that's easy to say deserves to be said properly.",
+    "A heart that's full doesn't need to abbreviate.",
+    "Some 'I miss you's are too big for emojis.",
+    "You don't fall out of love, you just stop writing it down.",
+    "The ones who matter deserve paragraphs, not just punctuation.",
+    "Feelings fade when unspoken. Words make them stay.",
+    "Don't let autocorrect finish what your heart started.",
+    "A voice note is sweet. A letter is forever.",
+    "The heart remembers what the group chat forgets.",
+    "You don't need the perfect words, just the honest ones.",
+    "Some love is too big to send as a reply.",
+    "Write it down before the feeling learns how to fade.",
+    "A love unspoken is still a love unfinished.",
+    "The best love letters are just honesty wearing nice handwriting.",
+    "If you have to think twice before saying it, it's worth writing instead.",
+    "Silence forgets. Ink remembers.",
+    "A heartfelt paragraph outlives a hundred perfect texts.",
+    "Some people are worth the extra sentence.",
+    "You can delete a message. You can't delete a memory made of words.",
+    "Real love doesn't fit in a notification.",
+    "Say the soft things before the moment turns hard to reach.",
+    "The love you almost didn't say out loud is usually the one that mattered most.",
+  ];
+  const randomQuotes = quotes[Math.floor(Math.random() * quotes.length)];
+  return randomQuotes;
+}
