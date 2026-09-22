@@ -15,6 +15,7 @@ import {
 } from "lucide-react";
 import { motion } from "motion/react";
 import { useTheme } from "next-themes";
+import { useRouter } from "next/navigation";
 
 const feelingOptions = [
   {
@@ -23,6 +24,7 @@ const feelingOptions = [
       "Turn everything in your heart into a thoughtful letter they can keep forever.",
     icon: Mail,
     featured: true,
+    path: "/kenshie/loveLetter",
     available: true,
   },
   {
@@ -31,6 +33,7 @@ const feelingOptions = [
       "Create a short and meaningful message for a little moment of affection.",
     icon: MessageCircleHeart,
     featured: false,
+    path: "/kenshie/sweetMessage",
     available: false,
   },
   {
@@ -39,6 +42,7 @@ const feelingOptions = [
       "Let someone know how much you notice, value, and appreciate them.",
     icon: Heart,
     featured: false,
+    path: "/kenshie/appreciationNote",
     available: false,
   },
   {
@@ -47,6 +51,7 @@ const feelingOptions = [
       "Make their special day even sweeter with words written from the heart.",
     icon: Gift,
     featured: false,
+    path: "/kenshie/birthdayWishes",
     available: false,
   },
   {
@@ -55,6 +60,7 @@ const feelingOptions = [
       "Pair your feelings with songs that say what words sometimes cannot.",
     icon: Music2,
     featured: false,
+    path: "/kenshie/playlistDedication",
     available: false,
   },
   {
@@ -63,12 +69,14 @@ const feelingOptions = [
       "Celebrate a beautiful memory, a shared journey, or another year together.",
     icon: BookHeart,
     featured: false,
+    path: "/kenshie/anniversaryNote",
     available: false,
   },
 ];
 
 const page = () => {
     const { theme, setTheme } = useTheme();
+    const router = useRouter();
   return (
     <main className="relative min-h-svh overflow-hidden bg-background text-foreground">
       <div
@@ -163,6 +171,7 @@ const page = () => {
               <motion.article
                 key={option.title}
                 initial={{ opacity: 0, y: 22 }}
+                onClick={() => router.push(option.path)}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{
                   duration: 0.55,

@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono, Inter, Lora, Playfair_Display } from "next/font/google";
+import { Cormorant_Garamond, Geist, Geist_Mono, Inter, Lora, Parisienne, Playfair_Display } from "next/font/google";
 import "./globals.css";
 import { cn } from "@/lib/utils";
 import { ThemeProvider } from "./components/theme-provider";
@@ -14,6 +14,19 @@ const playfair = Playfair_Display({
 const lora = Lora({
   variable: "--font-lora",
   subsets: ['latin']
+});
+
+const cormorant = Cormorant_Garamond({
+  subsets: ["latin"],
+  variable: "--font-cormorant",
+  display: "swap",
+});
+
+const ballet = Parisienne({
+  subsets: ["latin"],
+  variable: "--font-ballet",
+  weight: '400',
+  display: "swap",
 });
 
 const geistSans = Geist({
@@ -44,7 +57,9 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
         "font-sans",
         inter.variable,
         playfair.variable,
-        lora.variable
+        lora.variable,
+        ballet.variable,
+        cormorant.variable
       )}
     >
       <body className="min-h-full flex flex-col">
