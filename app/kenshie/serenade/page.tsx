@@ -193,6 +193,7 @@ const page = () => {
                 onKeyDown={(e) => {
                   if (e.key === "Enter") {
                     e.preventDefault();
+                    e.stopPropagation();
                     e.currentTarget.blur();
                     handleSearchSong();
                   }
