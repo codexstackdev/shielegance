@@ -183,7 +183,7 @@ const page = () => {
             </div>
 
             <div className="relative mt-6">
-              <Search className="pointer-events-none absolute left-4 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
+              <Search onClick={handleSearchSong} className={`${isSearching && "pointer-events-none"} absolute left-4 top-1/2 size-4 -translate-y-1/2 text-muted-foreground`} />
               <input
                 type="text"
                 value={search}
