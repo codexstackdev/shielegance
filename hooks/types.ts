@@ -17,3 +17,23 @@ export type LetterFont = {
   description: string;
   variable: string;
 };
+
+export type LetterData = {
+  _id: string;
+  recipient: string;
+  sender: string;
+  selectedTemplate: TemplateId;
+  selectedFont: FontId;
+  message: string;
+  closing: string;
+  createdAt: string;
+  updatedAt: string;
+};
+
+export  type MusicTrack = {
+  id: string;
+  title: string;
+  thumbMedium: string;
+  duration: string;
+  viewCount: string;
+};

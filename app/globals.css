@@ -136,3 +136,11 @@
     @apply bg-background text-foreground;
   }
 }
+
+.customScroll {
+  @apply  [&::-webkit-scrollbar]:w-2
+  [&::-webkit-scrollbar-track]:rounded-full
+  [&::-webkit-scrollbar-track]:bg-background
+  [&::-webkit-scrollbar-thumb]:rounded-full
+  [&::-webkit-scrollbar-thumb]:bg-foreground
+}

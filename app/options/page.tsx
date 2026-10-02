@@ -10,6 +10,7 @@ import {
   MessageCircleHeart,
   Moon,
   Music2,
+  ScrollText,
   Sparkles,
   Sun,
 } from "lucide-react";
@@ -28,48 +29,21 @@ const feelingOptions = [
     available: true,
   },
   {
-    title: "Sweet Message",
+    title: "Serenade",
     description:
-      "Create a short and meaningful message for a little moment of affection.",
-    icon: MessageCircleHeart,
-    featured: false,
-    path: "/kenshie/sweetMessage",
-    available: false,
+      "Dedicate a song to someone you love. Pick the track that says what you can't, add a short message if you want, and send them a page that's just theirs to press play on your song, your moment.",
+    icon: Music2,
+    featured: true,
+    path: "/kenshie/serenade",
+    available: true,
   },
   {
-    title: "Appreciation Note",
+    title: "Kenshie",
     description:
-      "Let someone know how much you notice, value, and appreciate them.",
-    icon: Heart,
+      "Kenshie is where stories breathe and love unfolds with every scroll. Let your heart wander through chapters filled with whispers, secrets, and moments meant only for you. A journey of emotion, one page at a time.",
+    icon: ScrollText,
     featured: false,
     path: "/kenshie/appreciationNote",
-    available: false,
-  },
-  {
-    title: "Birthday Wishes",
-    description:
-      "Make their special day even sweeter with words written from the heart.",
-    icon: Gift,
-    featured: false,
-    path: "/kenshie/birthdayWishes",
-    available: false,
-  },
-  {
-    title: "Playlist Dedication",
-    description:
-      "Pair your feelings with songs that say what words sometimes cannot.",
-    icon: Music2,
-    featured: false,
-    path: "/kenshie/playlistDedication",
-    available: false,
-  },
-  {
-    title: "Anniversary Note",
-    description:
-      "Celebrate a beautiful memory, a shared journey, or another year together.",
-    icon: BookHeart,
-    featured: false,
-    path: "/kenshie/anniversaryNote",
     available: false,
   },
 ];

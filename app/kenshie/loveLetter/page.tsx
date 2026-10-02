@@ -16,6 +16,8 @@ import Footer from "@/app/components/Footer";
 import { FontId, LetterFont, LetterTemplate, TemplateId } from "@/hooks/types";
 import { toast } from "sonner";
 import UnlockBtn from "@/app/components/UnlockBtn";
+import { createLetter } from "@/hooks/actions";
+import { Spinner } from "@/components/ui/spinner";
 
 const templates: LetterTemplate[] = [
   {
@@ -90,6 +92,7 @@ const page = () => {
   const [closing, setClosing] = useState("With all my love");
   const [loading, setLoading] = useState(false);
   const [isSubmitted, setSubmitted] = useState(false);
+  const [id, setId] = useState("");
 
   const activeTemplate =
     templates.find((template) => template.id === selectedTemplate) ??
@@ -98,14 +101,27 @@ const page = () => {
 
   const handleSubmit = async (e: React.SubmitEvent) => {
     e.preventDefault();
-    if (!sender || !message || !recipient) {
+    if (!message || !recipient || !message) {
       toast.error("Don't leave things empty. Speak from the heart!");
       return;
     }
     setLoading(true);
     try {
-      console.log(recipient, sender, message, selectedFont, selectedTemplate);
-      setSubmitted(true);
+      const data = await createLetter(
+        recipient,
+        selectedTemplate,
+        selectedFont,
+        message,
+        closing,
+        sender,
+      );
+      if (data.success) {
+        toast.success(data.message);
+        setSubmitted(true);
+        setId(data.id);
+      } else {
+        toast.error(data.message);
+      }
     } catch (error) {
       console.error(error);
     } finally {
@@ -227,7 +243,7 @@ const page = () => {
                     htmlFor="sender"
                     className="text-sm font-semibold text-card-foreground"
                   >
-                    From
+                    From (Optional)
                   </label>
                   <input
                     id="sender"
@@ -362,15 +378,24 @@ const page = () => {
                 />
               </div>
 
-              {isSubmitted ? (
-                <UnlockBtn unlockUrl="test" />
+              {isSubmitted && id ? (
+                <UnlockBtn path={"loveLetter"} unlockUrl={id}/>
               ) : (
                 <button
                   type="submit"
+                  disabled={loading}
                   className="inline-flex min-h-12 w-full items-center justify-center gap-2 rounded-full bg-primary px-6 text-sm font-semibold text-primary-foreground shadow-md shadow-primary/15 transition-all duration-300 hover:-translate-y-0.5 hover:bg-primary/90 hover:shadow-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
                 >
-                  <Sparkles className="size-4" />
-                  Continue with this letter
+                  {loading ? (
+                    <>
+                      <Spinner className="size-4" /> Creating your letter
+                    </>
+                  ) : (
+                    <>
+                      <Sparkles className="size-4" />
+                      Continue with this letter
+                    </>
+                  )}
                 </button>
               )}
             </form>

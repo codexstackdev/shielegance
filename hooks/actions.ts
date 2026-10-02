@@ -1,3 +1,25 @@
+const handleError = (error: any) => {
+  return error instanceof Error ? error.message : "Something went wrong";
+};
+
+const headers = {
+  "Content-Type": "application/json",
+};
+
+export async function auth(){
+  try {
+    const req = await fetch("/api/v1/auth/token", {
+      method: "POST",
+      headers,
+    });
+    const data = await req.json();
+    if(!data.initialize) return { success: false, message: data.message};
+    return data;
+  } catch (error) {
+    return { success: false, message: handleError(error) }
+  }
+}
+
 export function getQuotes() {
   const quotes = [
     "Some feelings deserve more than a simple text.",
@@ -34,3 +56,98 @@ export function getQuotes() {
   const randomQuotes = quotes[Math.floor(Math.random() * quotes.length)];
   return randomQuotes;
 }
+
+//loveLetter
+export async function createLetter(
+  recipient: string,
+  selectedTemplate: string,
+  selectedFont: string,
+  message: string,
+  closing: string,
+  sender?: string,
+) {
+  try {
+    const req = await fetch("/api/v1/kenshie/loveLetter", {
+      method: "POST",
+      headers,
+      body: JSON.stringify({
+        recipient,
+        sender,
+        selectedTemplate,
+        selectedFont,
+        message,
+        closing,
+      }),
+    });
+    const data = await req.json();
+    if (!data.success) return { success: false, message: data.message };
+    return data;
+  } catch (error) {
+    return { success: false, message: handleError(error) };
+  }
+}
+
+export async function getLetter(id:string){
+  try {
+    const req = await fetch(`/api/v1/kenshie/loveLetter?id=${id}`, {
+      method: "GET",
+      headers
+    });
+    const data = await req.json();
+    if(!data.success) return { success: false, message: data.message};
+    return data;
+  } catch (error) {
+    return { success: false, message: handleError(error) }
+  }
+}
+//end of loveLetter
+
+//serenade
+export async function searchSongs(title:string){
+  try {
+    const req = await fetch(`https://jeextract.vercel.app/api/proxy?q=${title + "official Audio"}`);
+    const data = await req.json();
+    if(data.length < 0) return { success: false, message: "No music was found"}
+    return data;
+  } catch (error) {
+    return { success: false, message: handleError(error) }
+  }
+}
+export async function createSerenade(
+  recipient: string,
+  message: string,
+  songId: string,
+  sender?: string,
+) {
+  try {
+    const req = await fetch("/api/v1/kenshie/serenade", {
+      method: "POST",
+      headers,
+      body: JSON.stringify({
+        recipient,
+        message,
+        sender,
+        songId
+      }),
+    });
+    const data = await req.json();
+    if (!data.success) return { success: false, message: data.message };
+    return data;
+  } catch (error) {
+    return { success: false, message: handleError(error) };
+  }
+}
+export async function getSerenade(id:string){
+  try {
+    const req = await fetch(`/api/v1/kenshie/serenade?id=${id}`, {
+      method: "GET",
+      headers
+    });
+    const data = await req.json();
+    if(!data.success) return { success: false, message: data.message};
+    return data;
+  } catch (error) {
+    return { success: false, message: handleError(error) }
+  }
+}
+//end of serenade

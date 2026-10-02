@@ -13,22 +13,27 @@ import { motion } from "motion/react";
 
 interface UnlockBtnProps {
   unlockUrl: string;
+  path: string;
 }
 
-const STORAGE_KEY = "shielegance_unlock_state";
+const STORAGE_PREFIX = "shielegance_unlock_state";
 const WAIT_SECONDS = 5;
+const UNLOCK_EXPIRY_MS = 5 * 60 * 1000;
 const INSTAGRAM_URL = "https://www.instagram.com/codexstackdev";
 
 type StoredState = {
   status: "waiting" | "unlocked";
   unlockAt: number;
+  expiresAt: number;
 };
 
 type UnlockStatus = "idle" | "waiting" | "unlocked";
 
-const getStoredState = (): StoredState | null => {
+const getStorageKey = (unlockUrl: string) => `${STORAGE_PREFIX}_${unlockUrl}`;
+
+const getStoredState = (unlockUrl: string): StoredState | null => {
   try {
-    const raw = localStorage.getItem(STORAGE_KEY);
+    const raw = localStorage.getItem(getStorageKey(unlockUrl));
     if (!raw) return null;
     return JSON.parse(raw) as StoredState;
   } catch {
@@ -36,53 +41,68 @@ const getStoredState = (): StoredState | null => {
   }
 };
 
-const setStoredState = (state: StoredState) => {
+const setStoredState = (unlockUrl: string, state: StoredState) => {
   try {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+    localStorage.setItem(getStorageKey(unlockUrl), JSON.stringify(state));
   } catch {
     return;
   }
 };
 
-const UnlockBtn = ({ unlockUrl }: UnlockBtnProps) => {
-  const [status, setStatus] = useState<UnlockStatus>("idle");
-  const [secondsLeft, setSecondsLeft] = useState(WAIT_SECONDS);
+const deriveState = (unlockUrl: string): { status: UnlockStatus; secondsLeft: number } => {
+  const saved = getStoredState(unlockUrl);
+
+  if (!saved) {
+    return { status: "idle", secondsLeft: WAIT_SECONDS };
+  }
+
+  if (saved.status === "unlocked") {
+    if (Date.now() >= saved.expiresAt) {
+      return { status: "idle", secondsLeft: WAIT_SECONDS };
+    }
+    return { status: "unlocked", secondsLeft: 0 };
+  }
+
+  const remainingMs = saved.unlockAt - Date.now();
+
+  if (remainingMs <= 0) {
+    const expiresAt = Date.now() + UNLOCK_EXPIRY_MS;
+    setStoredState(unlockUrl, { status: "unlocked", unlockAt: saved.unlockAt, expiresAt });
+    return { status: "unlocked", secondsLeft: 0 };
+  }
+
+  return { status: "waiting", secondsLeft: Math.ceil(remainingMs / 1000) };
+};
+
+const UnlockBtn = ({ unlockUrl, path }: UnlockBtnProps) => {
+  const [status, setStatus] = useState<UnlockStatus>(
+    () => deriveState(unlockUrl).status
+  );
+  const [secondsLeft, setSecondsLeft] = useState(
+    () => deriveState(unlockUrl).secondsLeft
+  );
   const [copied, setCopied] = useState(false);
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
   useEffect(() => {
-    const saved = getStoredState();
-    if (!saved) return;
-
-    if (saved.status === "unlocked") {
-      setStatus("unlocked");
-      return;
-    }
-
-    const remainingMs = saved.unlockAt - Date.now();
-
-    if (remainingMs <= 0) {
-      setStatus("unlocked");
-      setStoredState({ status: "unlocked", unlockAt: saved.unlockAt });
-      return;
-    }
-
-    setSecondsLeft(Math.ceil(remainingMs / 1000));
-    setStatus("waiting");
-  }, []);
+    const { status: nextStatus, secondsLeft: nextSeconds } = deriveState(unlockUrl);
+    setStatus(nextStatus);
+    setSecondsLeft(nextSeconds);
+  }, [unlockUrl]);
 
   useEffect(() => {
     if (status !== "waiting") return;
 
     timerRef.current = setInterval(() => {
-      const saved = getStoredState();
+      const saved = getStoredState(unlockUrl);
       const unlockAt = saved?.unlockAt ?? Date.now();
       const remainingMs = unlockAt - Date.now();
 
       if (remainingMs <= 0) {
         if (timerRef.current) clearInterval(timerRef.current);
+        const expiresAt = Date.now() + UNLOCK_EXPIRY_MS;
         setStatus("unlocked");
-        setStoredState({ status: "unlocked", unlockAt });
+        setStoredState(unlockUrl, { status: "unlocked", unlockAt, expiresAt });
         return;
       }
 
@@ -92,19 +112,40 @@ const UnlockBtn = ({ unlockUrl }: UnlockBtnProps) => {
     return () => {
       if (timerRef.current) clearInterval(timerRef.current);
     };
-  }, [status]);
+  }, [status, unlockUrl]);
+
+  useEffect(() => {
+    if (status !== "unlocked") return;
+
+    const saved = getStoredState(unlockUrl);
+    if (!saved || saved.status !== "unlocked") return;
+
+    const msUntilExpiry = saved.expiresAt - Date.now();
+    if (msUntilExpiry <= 0) {
+      setStatus("idle");
+      setSecondsLeft(WAIT_SECONDS);
+      return;
+    }
+
+    const expiryTimer = setTimeout(() => {
+      setStatus("idle");
+      setSecondsLeft(WAIT_SECONDS);
+    }, msUntilExpiry);
+
+    return () => clearTimeout(expiryTimer);
+  }, [status, unlockUrl]);
 
   const handleFollowClick = () => {
     window.open(INSTAGRAM_URL, "_blank", "noopener,noreferrer");
     const unlockAt = Date.now() + WAIT_SECONDS * 1000;
-    setStoredState({ status: "waiting", unlockAt });
+    setStoredState(unlockUrl, { status: "waiting", unlockAt, expiresAt: 0 });
     setSecondsLeft(WAIT_SECONDS);
     setStatus("waiting");
   };
 
   const handleCopyLink = async () => {
     try {
-      const finalUrl = process.env.NODE_ENV === "development" ? `localhost:3000/kenshie/loveLetter/${unlockUrl}` : `https://shielegance.vercel.app/kenshie/loveLetter/${unlockUrl}`
+      const finalUrl = process.env.NODE_ENV === "development" ? `http://localhost:3000/kenshie/${path}/${unlockUrl}` : `https://shielegance.vercel.app/kenshie/${path}/${unlockUrl}`
       await navigator.clipboard.writeText(finalUrl);
       setCopied(true);
       window.setTimeout(() => setCopied(false), 2000);
@@ -114,7 +155,7 @@ const UnlockBtn = ({ unlockUrl }: UnlockBtnProps) => {
   };
 
   const handleOpenPreview = () => {
-    const finalUrl = process.env.NODE_ENV === "development" ? `localhost:3000/kenshie/loveLetter/${unlockUrl}` : `https://shielegance.vercel.app/kenshie/loveLetter/${unlockUrl}`
+    const finalUrl = process.env.NODE_ENV === "development" ? `http://localhost:3000/kenshie/${path}/${unlockUrl}` : `https://shielegance.vercel.app/kenshie/${path}/${unlockUrl}`
     window.open(finalUrl, "_blank", "noopener,noreferrer");
   };
 
@@ -253,7 +294,7 @@ const UnlockBtn = ({ unlockUrl }: UnlockBtnProps) => {
                 Private preview link
               </p>
               <p className="break-all text-sm leading-6 text-foreground">
-                {process.env.NODE_ENV === "development" ? `localhost:3000/kenshie/loveLetter/${unlockUrl}` : `https://shielegance.vercel.app/kenshie/loveLetter/${unlockUrl}`}
+                {process.env.NODE_ENV === "development" ? `localhost:3000/kenshie/${path}/${unlockUrl}` : `https://shielegance.vercel.app/kenshie/${path}/${unlockUrl}`}
               </p>
             </div>
 

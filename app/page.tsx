@@ -6,11 +6,21 @@ import { motion } from "motion/react";
 import { useTheme } from "next-themes";
 import { useRouter } from "next/navigation";
 import Footer from "./components/Footer";
-import { getQuotes } from "@/hooks/actions";
+import { auth, getQuotes } from "@/hooks/actions";
+import { useEffect } from "react";
 
 const page = () => {
   const { theme, setTheme } = useTheme();
   const router = useRouter();
+  useEffect(() => {
+    (async () => {
+      try {
+        const response =  await auth();
+      } catch (error) {
+        console.log(error)
+      }
+    })();
+  }, []);
   return (
     <main className="relative min-h-svh overflow-hidden bg-background text-foreground">
       <div
