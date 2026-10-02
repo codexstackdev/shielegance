@@ -192,10 +192,12 @@ const page = () => {
                 aria-label="Search music"
                 onKeyDown={(e) => {
                   if (e.key === "Enter") {
+                    e.preventDefault();
+                    e.currentTarget.blur();
                     handleSearchSong();
                   }
                 }}
-                 onChange={(event) => setSearch(event.target.value)}
+                onChange={(event) => setSearch(event.target.value)}
                 className="h-12 w-full rounded-full border border-input bg-background pl-11 pr-4 text-sm text-foreground outline-none transition-colors placeholder:text-muted-foreground/70 focus:border-ring focus:ring-2 focus:ring-ring/20"
               />
               {isSearching && (
@@ -326,6 +328,7 @@ const page = () => {
                       To
                     </label>
                     <input
+                      type="text"
                       id="serenade-recipient"
                       value={recipient}
                       onChange={(event) => setRecipient(event.target.value)}
@@ -342,6 +345,7 @@ const page = () => {
                       From (Optional)
                     </label>
                     <input
+                      type="text"
                       id="serenade-sender"
                       value={sender}
                       onChange={(event) => setSender(event.target.value)}
