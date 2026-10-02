@@ -185,9 +185,9 @@ const page = () => {
             <div className="relative mt-6">
               <Search className="pointer-events-none absolute left-4 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
               <input
+                type="text"
                 value={search}
                 disabled={isSearching}
-                onChange={(event) => setSearch(event.target.value)}
                 placeholder="Search by title, artist..."
                 aria-label="Search music"
                 onKeyDown={(e) => {
@@ -195,6 +195,7 @@ const page = () => {
                     handleSearchSong();
                   }
                 }}
+                 onChange={(event) => setSearch(event.target.value)}
                 className="h-12 w-full rounded-full border border-input bg-background pl-11 pr-4 text-sm text-foreground outline-none transition-colors placeholder:text-muted-foreground/70 focus:border-ring focus:ring-2 focus:ring-ring/20"
               />
               {isSearching && (
