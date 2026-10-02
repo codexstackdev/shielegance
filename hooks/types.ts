@@ -37,3 +37,12 @@ export  type MusicTrack = {
   duration: string;
   viewCount: string;
 };
+
+
+export type serenadeProps = {
+  recipient: string,
+  sender: string,
+  title: string,
+  message: string,
+  songId: string
+}
