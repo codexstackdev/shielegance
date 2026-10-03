@@ -11,7 +11,7 @@ import {
 } from "lucide-react";
 import { motion } from "motion/react";
 import QRgenerator from "./QRgenerator";
-import cheer from "@/assets/cheer.jpg";
+import cheer from "@/assets/cheer.svg";
 
 interface UnlockBtnProps {
   unlockUrl: string;
@@ -147,7 +147,7 @@ const UnlockBtn = ({ unlockUrl, path }: UnlockBtnProps) => {
 
   const handleCopyLink = async () => {
     try {
-      const finalUrl = process.env.NODE_ENV === "development" ? `http://localhost:3000/kenshie/${path}/${unlockUrl}` : `https://shielegance.vercel.app/kenshie/${path}/${unlockUrl}`
+      const finalUrl = process.env.NODE_ENV === "development" ? `localhost:3000/kenshie/${path}/${unlockUrl}` : `https://shielegance.vercel.app/kenshie/${path}/${unlockUrl}`
       await navigator.clipboard.writeText(finalUrl);
       setCopied(true);
       window.setTimeout(() => setCopied(false), 2000);
@@ -307,10 +307,10 @@ const UnlockBtn = ({ unlockUrl, path }: UnlockBtnProps) => {
                 <p className="mt-2 max-w-xs text-xs leading-5 text-muted-foreground">
                   Scan this heart-made code or send the link to someone special.
                 </p>
-                <div className="mt-5 rounded-[1.75rem] border border-primary/15 bg-card p-3 shadow-lg shadow-primary/10">
+                <div className="mt-5 flex w-full min-w-0 justify-center overflow-hidden">
                   <QRgenerator
-                    url={process.env.NODE_ENV === "development" ? `localhost:3000/kenshie/${path}/${unlockUrl}` : `https://shielegance.vercel.app/kenshie/${path}/${unlockUrl}`}
-                    size={248}
+                    url={process.env.NODE_ENV === "development" ? `http://localhost:3000/kenshie/${path}/${unlockUrl}` : `https://shielegance.vercel.app/kenshie/${path}/${unlockUrl}`}
+                    size={240}
                     fileName="shielegance"
                     image={cheer.src}
                   />

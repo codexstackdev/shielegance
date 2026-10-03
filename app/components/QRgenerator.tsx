@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import QRCode from "qrcode";
-import { Download, Heart, ImagePlus, Sparkles } from "lucide-react";
+import { Download } from "lucide-react";
 
 interface QRgeneratorProps {
   url: string;
@@ -87,7 +87,7 @@ const drawCenterImage = async (
   context.roundRect(boxX, boxY, boxSize, boxSize, size * 0.025);
   context.fill();
   context.strokeStyle = "#F4D7DD";
-  context.lineWidth = Math.max(1, size * 0.006);
+  context.lineWidth = Math.max(1.5, size * 0.006);
   context.stroke();
 
   if (imageSource) {
@@ -97,6 +97,10 @@ const drawCenterImage = async (
       context.beginPath();
       context.arc(center, center, logoSize / 2, 0, Math.PI * 2);
       context.clip();
+
+      context.imageSmoothingEnabled = true;
+      context.imageSmoothingQuality = "high";
+
       const ratio = Math.max(logoSize / image.width, logoSize / image.height);
       const width = image.width * ratio;
       const height = image.height * ratio;
@@ -117,7 +121,7 @@ const QRgenerator = ({
   size = 280,
   fileName = "shielegance-qr",
   image,
-  message = "A little love is waiting for you.",
+  message = "You have received a personalized digital surprise.",
 }: QRgeneratorProps) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [isReady, setIsReady] = useState(false);
@@ -129,6 +133,9 @@ const QRgenerator = ({
 
     const renderQr = async () => {
       setIsReady(false);
+
+      canvas.width = size;
+      canvas.height = size;
 
       await QRCode.toCanvas(canvas, url, {
         width: size,
@@ -156,18 +163,24 @@ const QRgenerator = ({
     };
   }, [image, size, url]);
 
-  const handleDownload = () => {
-    const qrCanvas = canvasRef.current;
-    if (!qrCanvas || !isReady) return;
+  const handleDownload = async () => {
+    if (!isReady || !url) return;
 
-    const scale = 2;
-    const cardWidth = (size + 64) * scale;
-    const cardHeight = (size + 188) * scale;
-    const card = document.createElement("canvas");
-    card.width = cardWidth;
-    card.height = cardHeight;
-    const context = card.getContext("2d");
+
+    const exportQrSize = 1200; 
+    const scale = 4;
+    
+    const cardWidth = (exportQrSize + 64 * scale);
+    const cardHeight = (exportQrSize + 220 * scale); 
+
+    const downloadCard = document.createElement("canvas");
+    downloadCard.width = cardWidth;
+    downloadCard.height = cardHeight;
+    const context = downloadCard.getContext("2d");
     if (!context) return;
+
+    context.imageSmoothingEnabled = true;
+    context.imageSmoothingQuality = "high";
 
     context.fillStyle = "#FFFFFF";
     context.fillRect(0, 0, cardWidth, cardHeight);
@@ -178,68 +191,75 @@ const QRgenerator = ({
     context.fillStyle = gradient;
     context.fillRect(0, 0, cardWidth, cardHeight);
 
-    const qrX = (cardWidth - size * scale) / 2;
+    const scratchCanvas = document.createElement("canvas");
+    await QRCode.toCanvas(scratchCanvas, url, {
+      width: exportQrSize,
+      margin: 4,
+      errorCorrectionLevel: "H",
+      color: {
+        dark: "#7A3B46",
+        light: "#FFFDFD",
+      },
+    });
+
+    const scratchContext = scratchCanvas.getContext("2d");
+    if (scratchContext) {
+      scratchContext.imageSmoothingEnabled = true;
+      scratchContext.imageSmoothingQuality = "high";
+      await drawCenterImage(scratchContext, image, exportQrSize);
+    }
+
+    const qrX = (cardWidth - exportQrSize) / 2;
     const qrY = 32 * scale;
-    context.drawImage(qrCanvas, qrX, qrY, size * scale, size * scale);
+
+    context.drawImage(scratchCanvas, qrX, qrY, exportQrSize, exportQrSize);
 
     context.strokeStyle = "#F1D9DE";
     context.lineWidth = 2 * scale;
-    context.strokeRect(qrX - 10 * scale, qrY - 10 * scale, size * scale + 20 * scale, size * scale + 20 * scale);
+    context.strokeRect(
+      qrX - 10 * scale, 
+      qrY - 10 * scale, 
+      exportQrSize + 20 * scale, 
+      exportQrSize + 20 * scale
+    );
 
     context.textAlign = "center";
+    context.textBaseline = "middle";
+
     context.fillStyle = "#7A3B46";
     context.font = `600 ${16 * scale}px Georgia, serif`;
-    context.fillText(message, cardWidth / 2, (size + 84) * scale, cardWidth - 48 * scale);
+    context.fillText(message, cardWidth / 2, qrY + exportQrSize + 44 * scale, cardWidth - 48 * scale);
 
     context.fillStyle = "#A97984";
-    context.font = `500 ${10 * scale}px Arial, sans-serif`;
-    context.fillText("Scan to open something made with love", cardWidth / 2, (size + 112) * scale, cardWidth - 48 * scale);
+    context.font = `500 ${11 * scale}px Arial, sans-serif`;
+    context.fillText("Scan the QR code to open your dedication.", cardWidth / 2, qrY + exportQrSize + 74 * scale, cardWidth - 48 * scale);
 
     context.fillStyle = "#7A3B46";
     context.font = `600 ${10 * scale}px Arial, sans-serif`;
-    context.fillText("powered by shielegance.vercel.app", cardWidth / 2, (size + 160) * scale, cardWidth - 48 * scale);
+    context.fillText("Created with shielegance.vercel.app", cardWidth / 2, qrY + exportQrSize + 130 * scale, cardWidth - 48 * scale);
+
 
     const link = document.createElement("a");
     link.download = `${fileName}-polaroid.png`;
-    link.href = card.toDataURL("image/png");
+    link.href = downloadCard.toDataURL("image/png", 1.0);
     link.click();
   };
 
   return (
-    <section className="relative flex w-full max-w-xs flex-col items-center overflow-hidden rounded-[2rem] border border-primary/20 bg-card p-6 text-card-foreground shadow-xl shadow-primary/10">
-      <div aria-hidden="true" className="absolute -right-12 -top-14 size-40 rounded-full bg-accent/35 blur-3xl" />
-      <div aria-hidden="true" className="absolute -bottom-16 -left-12 size-40 rounded-full bg-secondary/60 blur-3xl" />
-
-      <div className="relative z-10 text-center">
-        <p className="flex items-center justify-center gap-2 text-xs font-semibold uppercase tracking-[0.2em] text-primary">
-          <Sparkles className="size-3.5" />
-          A little surprise
-          <Sparkles className="size-3.5" />
-        </p>
-        <h2 className="font-heading mt-3 text-2xl font-semibold tracking-tight">
-          Scan to open
-        </h2>
-        <p className="mt-2 text-xs leading-5 text-muted-foreground">
-          A love note is waiting on the other side.
-        </p>
-      </div>
-
-      <div className="relative z-10 my-6 rounded-[1.5rem] bg-secondary/45 p-3 shadow-inner">
-        <div className="rounded-[1rem] border-4 border-primary/15 bg-card p-2 shadow-lg">
-          <canvas ref={canvasRef} className="block max-w-full rounded-lg" />
-        </div>
-      </div>
-
-      <div className="relative z-10 flex items-center gap-2 rounded-full border border-primary/15 bg-secondary/45 px-4 py-2 text-xs text-muted-foreground">
-       <Heart className="size-3.5 fill-primary text-primary" />
-        Made with love
+    <section className="flex w-full min-w-0 flex-col gap-3 rounded-[1.5rem] border border-primary/15 bg-card p-3 text-card-foreground shadow-lg shadow-primary/10 sm:p-4">
+      <div className="flex w-full min-w-0 items-center justify-center overflow-hidden rounded-[1rem] border border-primary/15 bg-secondary/35 p-2">
+        <canvas
+          ref={canvasRef}
+          className="block h-auto w-full max-w-70 rounded-lg pointer-events-none"
+          style={{ aspectRatio: "1 / 1" }}
+        />
       </div>
 
       <button
         type="button"
         onClick={handleDownload}
         disabled={!isReady}
-        className="relative z-10 mt-5 inline-flex min-h-11 w-full items-center justify-center gap-2 rounded-full bg-primary px-4 text-sm font-semibold text-primary-foreground transition-all duration-300 hover:-translate-y-0.5 hover:bg-primary/90 hover:shadow-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-60"
+        className="inline-flex min-h-11 w-full shrink-0 items-center justify-center gap-2 rounded-full bg-primary px-4 text-sm font-semibold text-primary-foreground transition-all duration-300 hover:-translate-y-0.5 hover:bg-primary/90 hover:shadow-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-60"
       >
         <Download className="size-4" />
         Download QR
