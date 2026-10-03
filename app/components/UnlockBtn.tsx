@@ -10,6 +10,8 @@ import {
   Sparkles,
 } from "lucide-react";
 import { motion } from "motion/react";
+import QRgenerator from "./QRgenerator";
+import cheer from "@/assets/cheer.jpg";
 
 interface UnlockBtnProps {
   unlockUrl: string;
@@ -287,13 +289,43 @@ const UnlockBtn = ({ unlockUrl, path }: UnlockBtnProps) => {
           <motion.div
             initial={{ opacity: 0, y: 8 }}
             animate={{ opacity: 1, y: 0 }}
-            className="space-y-3"
+            className="space-y-4"
           >
-            <div className="rounded-2xl border border-primary/25 bg-secondary/35 p-4">
-              <p className="mb-2 text-xs font-semibold uppercase tracking-[0.15em] text-primary">
-                Private preview link
-              </p>
-              <p className="break-all text-sm leading-6 text-foreground">
+            <div className="relative overflow-hidden rounded-[1.75rem] border border-primary/20 bg-secondary/35 p-5 text-center sm:p-6">
+              <div aria-hidden="true" className="absolute -right-12 -top-16 size-40 rounded-full bg-accent/40 blur-3xl" />
+              <div aria-hidden="true" className="absolute -bottom-20 -left-14 size-44 rounded-full bg-primary/10 blur-3xl" />
+              <div className="relative flex flex-col items-center">
+                <div className="mb-3 flex size-10 items-center justify-center rounded-full bg-primary text-primary-foreground shadow-md shadow-primary/20">
+                  <Heart className="size-4 fill-current" />
+                </div>
+                <p className="text-xs font-semibold uppercase tracking-[0.18em] text-primary">
+                  A little love to share
+                </p>
+                <h3 className="font-heading mt-2 text-2xl font-semibold tracking-tight text-foreground">
+                  Your preview is ready
+                </h3>
+                <p className="mt-2 max-w-xs text-xs leading-5 text-muted-foreground">
+                  Scan this heart-made code or send the link to someone special.
+                </p>
+                <div className="mt-5 rounded-[1.75rem] border border-primary/15 bg-card p-3 shadow-lg shadow-primary/10">
+                  <QRgenerator
+                    url={process.env.NODE_ENV === "development" ? `localhost:3000/kenshie/${path}/${unlockUrl}` : `https://shielegance.vercel.app/kenshie/${path}/${unlockUrl}`}
+                    size={248}
+                    fileName="shielegance"
+                    image={cheer.src}
+                  />
+                </div>
+              </div>
+            </div>
+
+            <div className="rounded-2xl border border-border bg-muted/35 p-4">
+              <div className="mb-2 flex items-center gap-2">
+                <Sparkles className="size-3.5 text-primary" />
+                <p className="text-xs font-semibold uppercase tracking-[0.15em] text-primary">
+                  Private preview link
+                </p>
+              </div>
+              <p className="break-all rounded-xl border border-border bg-background px-3 py-2.5 text-sm leading-6 text-foreground">
                 {process.env.NODE_ENV === "development" ? `localhost:3000/kenshie/${path}/${unlockUrl}` : `https://shielegance.vercel.app/kenshie/${path}/${unlockUrl}`}
               </p>
             </div>
@@ -302,19 +334,15 @@ const UnlockBtn = ({ unlockUrl, path }: UnlockBtnProps) => {
               <button
                 type="button"
                 onClick={handleCopyLink}
-                className="inline-flex min-h-11 items-center justify-center gap-2 rounded-full border border-border bg-background px-4 text-sm font-semibold text-foreground transition-colors hover:bg-secondary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+                className="inline-flex min-h-11 items-center justify-center gap-2 rounded-full border border-border bg-background px-4 text-sm font-semibold text-foreground transition-all duration-300 hover:-translate-y-0.5 hover:bg-secondary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
               >
-                {copied ? (
-                  <Check className="size-4 text-primary" />
-                ) : (
-                  <Clipboard className="size-4" />
-                )}
+                {copied ? <Check className="size-4 text-primary" /> : <Clipboard className="size-4" />}
                 {copied ? "Copied" : "Copy link"}
               </button>
               <button
                 type="button"
                 onClick={handleOpenPreview}
-                className="inline-flex min-h-11 items-center justify-center gap-2 rounded-full bg-primary px-4 text-sm font-semibold text-primary-foreground transition-colors hover:bg-primary/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+                className="inline-flex min-h-11 items-center justify-center gap-2 rounded-full bg-primary px-4 text-sm font-semibold text-primary-foreground transition-all duration-300 hover:-translate-y-0.5 hover:bg-primary/90 hover:shadow-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
               >
                 Open preview
                 <ExternalLink className="size-4" />
