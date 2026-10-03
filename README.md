@@ -1,36 +1,96 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+🌹 ShiElegance
 
-## Getting Started
+ShiElegance is an elegant, romantic web application designed for sharing love letters, serenades, and expressive experiences. Built with modern web technologies, it features custom typography, letter templates, authentication, and security protections to create a memorable personal platform.
 
-First, run the development server:
+✨ Features
 
-```bash
+💌 Love Letter Generator & Templates
+
+Interactive submission form with real-time validation.
+
+Template selection and custom font options.
+
+Timed or key-based unlock feature for romantic surprises.
+
+🎵 Serenade & Audio Experience
+
+Integrated serenade features to accompany written messages with music or audio.
+
+🔍 Interactive Search
+
+Enhanced real-time search input with dynamic event handling and user experience polish (blur on enter, event propagation handling).
+
+🔐 Authentication & Security
+
+Secure user authentication.
+
+Built-in DisableDevTools component to discourage inspecting or tampering with special content/surprises when developer tools are open.
+
+🎨 Clean & Refactored Architecture
+
+Structured component library with helper utility functions for improved readability and maintainability.
+
+🚀 Getting Started
+
+Prerequisites
+
+Ensure you have the following installed on your local machine:
+
+Node.js (v16.x or higher)
+
+npm or yarn / pnpm
+
+Installation
+
+Clone the repository:
+
+git clone https://github.com/codexstackdev/shielegance.git
+cd shielegance
+
+
+Install dependencies:
+
+npm install
+# or
+yarn install
+
+
+Run the development server:
+
 npm run dev
 # or
 yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+Build for production:
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+npm run build
 
-## Learn More
 
-To learn more about Next.js, take a look at the following resources:
+🛠 Tech Stack
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+Frontend: React / Modern JavaScript (ES6+)
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+Styling: Custom CSS / Tailwind CSS (or preferred framework)
 
-## Deploy on Vercel
+Security: Custom DevTools blocker component
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+Version Control: Git & GitHub
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+📜 Commit History Highlights
+
+Search Enhancements: Implemented event propagation handling, custom onChange handlers, and Enter key blur responses.
+
+Security & Structure: Added DisableDevTools component and refactored core architecture for optimized maintainability.
+
+Expressive Features: Added authentication, serenade features, and fully customizable love letter templates with validation and timed/unlocked access.
+
+👤 Author
+
+codexstackdev
+
+GitHub: @codexstackdev
+
+📄 License
+
+This project is licensed under the MIT License.

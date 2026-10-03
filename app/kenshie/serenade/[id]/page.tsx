@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Heart, Music2, Play, Sparkles, Star } from "lucide-react";
+import { Heart, LockKeyhole, Music2, Play, Sparkles, Star } from "lucide-react";
 import { motion, useReducedMotion } from "motion/react";
 import Footer from "@/app/components/Footer";
 import { getSerenade } from "@/hooks/actions";
@@ -14,6 +14,7 @@ const page = () => {
   const [serenade, setSerenade] = useState<serenadeProps | null>(null)
   const [isEntered, setIsEntered] = useState(false);
   const [isOpening, setIsOpening] = useState(false);
+  const [isTryingToOpen, setIsTryingToOpen] = useState(false);
   const reduceMotion = useReducedMotion();
   const motionDuration = reduceMotion ? 0 : 0.75;
 
@@ -31,7 +32,13 @@ const page = () => {
   }, [param.id]);
 
   const openWindow = () => {
-    if (!isOpening) setIsOpening(true);
+    if (isOpening) return;
+    if (!serenade) {
+      setIsTryingToOpen(true);
+      window.setTimeout(() => setIsTryingToOpen(false), 900);
+      return;
+    }
+    setIsOpening(true);
   };
 
   return (
@@ -67,7 +74,7 @@ const page = () => {
 
             <motion.button
               type="button"
-              aria-label="Open the window and reveal your serenade"
+              aria-label={serenade ? "Open the window and reveal your serenade" : "The window is locked while the serenade loads"}
               disabled={isOpening}
               onClick={openWindow}
               whileHover={reduceMotion ? undefined : { scale: 1.025 }}
@@ -79,6 +86,18 @@ const page = () => {
                 <span className="absolute inset-2 rounded-[1.15rem] border border-primary/20" />
                 <span className="absolute left-1/2 top-2 bottom-2 z-20 w-1 -translate-x-1/2 bg-primary/25" />
                 <span className="absolute left-2 right-2 top-1/2 z-20 h-1 -translate-y-1/2 bg-primary/25" />
+
+                {!serenade && (
+                  <motion.span
+                    aria-label="The serenade is still loading"
+                    initial={{ opacity: 1, scale: 1 }}
+                    animate={isTryingToOpen ? { x: [0, -8, 8, -6, 6, 0], rotate: [0, -8, 8, -6, 6, 0], scale: [1, 1.08, 1] } : { x: 0, rotate: 0, scale: 1 }}
+                    transition={{ duration: isTryingToOpen ? 0.65 : 0.35, ease: "easeInOut" }}
+                    className="absolute left-1/2 top-1/2 z-40 flex size-16 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-2xl border border-primary/25 bg-card/90 text-primary shadow-xl backdrop-blur sm:size-20"
+                  >
+                    <LockKeyhole className="size-7 sm:size-8" />
+                  </motion.span>
+                )}
 
                 <span
                   aria-hidden="true"
@@ -118,7 +137,7 @@ const page = () => {
 
             <p className="mt-5 flex items-center gap-2 text-xs font-medium text-muted-foreground sm:text-sm">
               <Sparkles className="size-3.5 text-primary" />
-              Tap the window to let the serenade in
+              {serenade ? "Tap the window to let the serenade in" : "The window is still locked"}
               <Sparkles className="size-3.5 text-primary" />
             </p>
           </div>
