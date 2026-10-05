@@ -1,16 +1,11 @@
 "use client";
 
+import { feelingOptions } from "@/hooks/features";
 import Footer from "../components/Footer";
 import {
   ArrowRight,
-  BookHeart,
-  Gift,
   Heart,
-  Mail,
-  MessageCircleHeart,
   Moon,
-  Music2,
-  ScrollText,
   Sparkles,
   Sun,
 } from "lucide-react";
@@ -18,39 +13,9 @@ import { motion } from "motion/react";
 import { useTheme } from "next-themes";
 import { useRouter } from "next/navigation";
 
-const feelingOptions = [
-  {
-    title: "Love Letter",
-    description:
-      "Turn everything in your heart into a thoughtful letter they can keep forever.",
-    icon: Mail,
-    featured: true,
-    path: "/kenshie/loveLetter",
-    available: true,
-  },
-  {
-    title: "Serenade",
-    description:
-      "Dedicate a song to someone you love. Pick the track that says what you can't, add a short message if you want, and send them a page that's just theirs to press play on your song, your moment.",
-    icon: Music2,
-    featured: true,
-    path: "/kenshie/serenade",
-    available: true,
-  },
-  {
-    title: "Kenshie",
-    description:
-      "Kenshie is where stories breathe and love unfolds with every scroll. Let your heart wander through chapters filled with whispers, secrets, and moments meant only for you. A journey of emotion, one page at a time.",
-    icon: ScrollText,
-    featured: false,
-    path: "/kenshie/appreciationNote",
-    available: false,
-  },
-];
-
 const page = () => {
-    const { theme, setTheme } = useTheme();
-    const router = useRouter();
+  const { theme, setTheme } = useTheme();
+  const router = useRouter();
   return (
     <main className="relative min-h-svh overflow-hidden bg-background text-foreground">
       <div
@@ -85,12 +50,18 @@ const page = () => {
 
           <button
             type="button"
-            onClick={() => setTheme((prev) => prev === "light" ? "dark" : "light")}
+            onClick={() =>
+              setTheme((prev) => (prev === "light" ? "dark" : "light"))
+            }
             aria-label="Toggle dark mode"
             aria-pressed="false"
             className="inline-flex size-10 items-center justify-center rounded-full border border-border bg-card/80 text-foreground shadow-sm backdrop-blur transition-colors hover:bg-secondary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
           >
-            {theme === "light" ? <Moon className="size-4" /> : <Sun className="size-4" />}
+            {theme === "light" ? (
+              <Moon className="size-4" />
+            ) : (
+              <Sun className="size-4" />
+            )}
           </button>
         </motion.header>
 
@@ -138,79 +109,84 @@ const page = () => {
           aria-label="Available ways to express your feelings"
           className="grid gap-4 pb-16 sm:grid-cols-2 lg:grid-cols-3"
         >
-          {feelingOptions.map((option, index) => {
-            const Icon = option.icon;
+          {feelingOptions
+            .sort((a, b) => {
+              if (b.available) return 1;
+              return -1;
+            })
+            .map((option, index) => {
+              const Icon = option.icon;
 
-            return (
-              <motion.article
-                key={option.title}
-                initial={{ opacity: 0, y: 22 }}
-                onClick={() => router.push(option.path)}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{
-                  duration: 0.55,
-                  delay: 0.2 + index * 0.08,
-                  ease: "easeOut",
-                }}
-                className={`group relative flex min-h-64 flex-col rounded-[1.5rem] border p-6 shadow-sm transition-all duration-300 ${
-                  option.featured
-                    ? "border-primary/40 bg-card shadow-md shadow-primary/10 hover:-translate-y-1 hover:shadow-lg hover:shadow-primary/15"
-                    : "border-border bg-card/70 hover:-translate-y-1 hover:border-primary/30 hover:bg-card hover:shadow-md"
-                }`}
-              >
-                {option.featured && (
-                  <span className="absolute right-5 top-5 rounded-full bg-secondary px-3 py-1 text-[10px] font-bold uppercase tracking-[0.16em] text-primary">
-                    Start here
-                  </span>
-                )}
-
-                {!option.available && (
-                  <span className="absolute right-5 top-5 rounded-full border border-border bg-muted px-3 py-1 text-[10px] font-semibold uppercase tracking-[0.14em] text-muted-foreground">
-                    Coming soon
-                  </span>
-                )}
-
-                <div
-                  className={`mb-6 flex size-12 items-center justify-center rounded-2xl ${
+              return (
+                <motion.article
+                  key={option.title}
+                  initial={{ opacity: 0, y: 22 }}
+                  onClick={() => router.push(option.path)}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{
+                    duration: 0.55,
+                    delay: 0.2 + index * 0.08,
+                    ease: "easeOut",
+                  }}
+                  className={`${!option.available && "pointer-events-none"} group relative flex min-h-64 flex-col rounded-[1.5rem] border p-6 shadow-sm transition-all duration-300 ${
                     option.featured
-                      ? "bg-primary text-primary-foreground"
-                      : "bg-secondary text-primary"
+                      ? "border-primary/40 bg-card shadow-md shadow-primary/10 hover:-translate-y-1 hover:shadow-lg hover:shadow-primary/15"
+                      : "border-border bg-card/70 hover:-translate-y-1 hover:border-primary/30 hover:bg-card hover:shadow-md"
                   }`}
                 >
-                  <Icon
-                    className={`size-5 ${
-                      option.featured ? "fill-current" : ""
-                    }`}
-                  />
-                </div>
+                  {option.featured && (
+                    <span className="absolute right-5 top-5 rounded-full bg-secondary px-3 py-1 text-[10px] font-bold uppercase tracking-[0.16em] text-primary">
+                      Start here
+                    </span>
+                  )}
 
-                <h2 className="font-heading text-2xl font-semibold tracking-tight text-card-foreground">
-                  {option.title}
-                </h2>
+                  {!option.available && (
+                    <span className="absolute right-5 top-5 rounded-full border border-border bg-muted px-3 py-1 text-[10px] font-semibold uppercase tracking-[0.14em] text-muted-foreground">
+                      Coming soon
+                    </span>
+                  )}
 
-                <p className="mt-3 max-w-xs text-sm leading-6 text-muted-foreground">
-                  {option.description}
-                </p>
-
-                <div className="mt-auto pt-6">
-                  <button
-                    type="button"
-                    disabled={!option.available}
-                    className={`inline-flex items-center gap-2 text-sm font-semibold transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 ${
-                      option.available
-                        ? "text-primary hover:text-primary/80"
-                        : "cursor-not-allowed text-muted-foreground/60"
+                  <div
+                    className={`mb-6 flex size-12 items-center justify-center rounded-2xl ${
+                      option.featured
+                        ? "bg-primary text-primary-foreground"
+                        : "bg-secondary text-primary"
                     }`}
                   >
-                    {option.available ? "Create now" : "Stay tuned"}
-                    {option.available && (
-                      <ArrowRight className="size-4 transition-transform duration-300 group-hover:translate-x-1" />
-                    )}
-                  </button>
-                </div>
-              </motion.article>
-            );
-          })}
+                    <Icon
+                      className={`size-5 ${
+                        option.featured ? "fill-current" : ""
+                      }`}
+                    />
+                  </div>
+
+                  <h2 className="font-heading text-2xl font-semibold tracking-tight text-card-foreground">
+                    {option.title}
+                  </h2>
+
+                  <p className="mt-3 max-w-xs text-sm leading-6 text-muted-foreground">
+                    {option.description}
+                  </p>
+
+                  <div className="mt-auto pt-6">
+                    <button
+                      type="button"
+                      disabled={!option.available}
+                      className={`inline-flex items-center gap-2 text-sm font-semibold transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 ${
+                        option.available
+                          ? "text-primary hover:text-primary/80"
+                          : "cursor-not-allowed text-muted-foreground/60"
+                      }`}
+                    >
+                      {option.available ? "Create now" : "Stay tuned"}
+                      {option.available && (
+                        <ArrowRight className="size-4 transition-transform duration-300 group-hover:translate-x-1" />
+                      )}
+                    </button>
+                  </div>
+                </motion.article>
+              );
+            })}
         </section>
 
         <motion.div

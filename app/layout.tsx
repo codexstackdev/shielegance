@@ -72,7 +72,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
           disableTransitionOnChange
         >
           <Toaster/>
-          <DisableDevtools/>
+          {process.env.NODE_ENV === "production" && <DisableDevtools/>}
           {children}
         </ThemeProvider>
       </body>

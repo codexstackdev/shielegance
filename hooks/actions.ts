@@ -2,6 +2,7 @@ const handleError = (error: any) => {
   return error instanceof Error ? error.message : "Something went wrong";
 };
 
+
 const headers = {
   "Content-Type": "application/json",
 };
@@ -151,3 +152,45 @@ export async function getSerenade(id:string){
   }
 }
 //end of serenade
+
+//loveCapsule
+export async function createCapsule(
+  recipient: string,
+  sender: string,
+  message: string,
+  unlockDate: string,
+  unlockTime: string
+) {
+  try {
+    const req = await fetch("/api/v1/kenshie/lovecapsule", {
+      method: "POST",
+      headers,
+      body: JSON.stringify({
+        recipient,
+        sender,
+        message,
+        unlockDate,
+        unlockTime
+      }),
+    });
+    const data = await req.json();
+    if (!data.success) return { success: false, message: data.message };
+    return data;
+  } catch (error) {
+    return { success: false, message: handleError(error) };
+  }
+}
+export async function getCapsule(id:string){
+  try {
+    const req = await fetch(`/api/v1/kenshie/lovecapsule?id=${id}`, {
+      method: "GET",
+      headers
+    });
+    const data = await req.json();
+    if(!data.success) return { success: false, message: data.message};
+    return data;
+  } catch (error) {
+    return { success: false, message: handleError(error) }
+  }
+}
+//end of loveCapsule

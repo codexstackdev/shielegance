@@ -46,3 +46,22 @@ export type serenadeProps = {
   message: string,
   songId: string
 }
+
+export type CapsuleData = {
+  _id: string;
+  recipient: string;
+  sender: string;
+  message: string;
+  unlockDate: string;
+  unlockTime: string;
+  createdAt: string;
+  updatedAt: string;
+};
+
+export type TimeLeft = {
+  total: number;
+  days: number;
+  hours: number;
+  minutes: number;
+  seconds: number;
+};

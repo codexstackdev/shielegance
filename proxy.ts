@@ -72,5 +72,6 @@ export const config = {
     '/api/v1/kenshie/:path*',
     '/kenshie/loveLetter/:path*',
     '/kenshie/serenade/:path*',
+    '/kenshie/loveCapsule/:path*',
   ],
 };
