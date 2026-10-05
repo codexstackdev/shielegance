@@ -100,6 +100,7 @@ const page = () => {
 
               <button
                 type="button"
+                onClick={() => router.push("/support")}
                 className="inline-flex min-h-12 w-full items-center justify-center rounded-full border border-border bg-card/70 px-6 text-sm font-semibold text-foreground shadow-sm backdrop-blur transition-all duration-300 hover:-translate-y-0.5 hover:bg-secondary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 sm:w-auto"
               >
                 Contact Support
