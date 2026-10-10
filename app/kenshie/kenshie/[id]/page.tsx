@@ -467,7 +467,7 @@ function formatDateLabel(dateString: string | undefined | null): string {
         <motion.div
           style={{ opacity: coreGlowOpacity }}
           aria-hidden="true"
-          className="absolute left-1/2 top-1/2 z-0 size-112 -translate-x-1/2 -translate-y-1/2 rounded-full bg-primary blur-3xl"
+          className="absolute left-1/2 top-1/2 z-0 size-96 -translate-x-1/2 -translate-y-1/2 rounded-full bg-primary/80 blur-2xl transform-gpu"
         />
         <div className="relative mx-auto max-w-5xl text-center">
           <p className="flex items-center justify-center gap-2 text-xs font-bold uppercase tracking-[0.2em] text-primary">
@@ -481,19 +481,22 @@ function formatDateLabel(dateString: string | undefined | null): string {
           </h2>
           <p className="mx-auto mt-7 max-w-xl text-sm leading-7 text-muted-foreground sm:text-base sm:leading-8">
             The place, the memories, the hard chapters, and every tiny detail
-            led here—to the people you became together.
+            led here to the people you became together.
           </p>
 
           <motion.div
-            style={{ y: coreImageY, scale: coreImageScale, rotate: coreRotate }}
-            className="mx-auto mt-14 max-w-3xl rounded-[2.5rem] border border-primary/25 bg-card p-2 shadow-2xl shadow-primary/20 sm:p-4"
+            style={{ y: coreImageY, scale: coreImageScale, rotate: coreRotate, contain: "layout paint" }}
+            className="mx-auto mt-14 max-w-3xl transform-gpu rounded-[2.5rem] border border-primary/25 bg-card p-2 shadow-2xl shadow-primary/20 will-change-transform sm:p-4"
           >
             <div className="relative overflow-hidden rounded-[2rem] border border-primary/15 bg-background p-2 sm:p-3">
-              <div className="relative flex min-h-72 max-h-[80svh] items-center justify-center overflow-hidden rounded-[1.5rem] bg-secondary/45 sm:min-h-112">
+              <div className="relative flex min-h-72 max-h-[80svh] items-center justify-center overflow-hidden rounded-[1.5rem] bg-secondary/45 transform-gpu sm:min-h-112">
                 <img
                   src={story?.image}
                   alt={`The core memory of ${story?.yourName} and ${story?.theirName}`}
-                  className="block max-h-[72svh] w-full max-w-full pointer-events-none object-contain object-center"
+                  loading="lazy"
+                  decoding="async"
+                  draggable={false}
+                  className="block max-h-[72svh] pointer-events-none w-full max-w-full object-contain object-center"
                 />
                 <div className="pointer-events-none absolute inset-0 bg-linear-to-t from-foreground/70 via-transparent to-transparent" />
                 <motion.div
@@ -501,13 +504,13 @@ function formatDateLabel(dateString: string | undefined | null): string {
                   initial={{ x: "-130%", opacity: 0 }}
                   animate={{ x: ["-130%", "130%"], opacity: [0, 0.45, 0] }}
                   transition={{ duration: 2.8, repeat: Infinity, repeatDelay: 4, ease: "easeInOut" }}
-                  className="pointer-events-none absolute inset-y-0 -left-1/2 w-1/2 -skew-x-12 bg-linear-to-r from-transparent via-primary/35 to-transparent"
+                  className="pointer-events-none absolute inset-y-0 -left-1/2 w-1/2 -skew-x-12 transform-gpu bg-linear-to-r from-transparent via-primary/35 to-transparent will-change-transform"
                 />
                 <motion.div
                   aria-hidden="true"
                   animate={{ opacity: [0.25, 0.5, 0.25], scale: [1, 1.04, 1] }}
                   transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
-                  className="pointer-events-none absolute inset-3 rounded-[1.25rem] border border-primary/25 sm:inset-5"
+                  className="pointer-events-none absolute inset-3 transform-gpu rounded-[1.25rem] border border-primary/25 will-change-transform sm:inset-5"
                 />
                 <div className="absolute bottom-5 left-4 right-4 flex flex-col items-center gap-2 text-center text-background sm:bottom-8 sm:left-8 sm:right-8">
                   <Heart className="size-8 fill-primary text-primary drop-shadow-lg" />
