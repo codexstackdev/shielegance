@@ -24,9 +24,9 @@ export const feelingOptions = [
     description:
       "Kenshie is where stories breathe and love unfolds with every scroll. Let your heart wander through chapters filled with whispers, secrets, and moments meant only for you. A journey of emotion, one page at a time.",
     icon: ScrollText,
-    featured: false,
+    featured: true,
     path: "/kenshie/kenshie",
-    available: false,
+    available: true,
   },
   {
     title: "Love Capsule",

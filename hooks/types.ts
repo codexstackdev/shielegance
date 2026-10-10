@@ -65,3 +65,37 @@ export type TimeLeft = {
   minutes: number;
   seconds: number;
 };
+
+export type StoryForm = {
+  yourName: string;
+  theirName: string;
+  beginning: string;
+  firstImpression: string;
+  firstMemorableMoment: string;
+  littleThings: string;
+  importantDate: string;
+  challenge: string;
+  realization: string;
+  favoriteMemory: string;
+  loveTruth: string;
+  future: string;
+};
+
+export type LoveStory = {
+  yourName: string;
+  theirName: string;
+  beginning: string;
+  firstImpression: string;
+  firstMemorableMoment: string;
+  littleThings: string;
+  importantDate: string;
+  challenge: string;
+  realization: string;
+  favoriteMemory: string;
+  loveTruth: string;
+  future: string;
+  image: string;
+  createdAt: { $date: string };
+  updatedAt: { $date: string };
+  __v: number;
+};

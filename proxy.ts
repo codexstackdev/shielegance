@@ -73,5 +73,6 @@ export const config = {
     '/kenshie/loveLetter/:path*',
     '/kenshie/serenade/:path*',
     '/kenshie/loveCapsule/:path*',
+    '/kenshie/:path*',
   ],
 };

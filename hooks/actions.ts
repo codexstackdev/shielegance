@@ -1,23 +1,55 @@
+import { supabase } from "@/lib/supabase";
 const handleError = (error: any) => {
   return error instanceof Error ? error.message : "Something went wrong";
 };
-
 
 const headers = {
   "Content-Type": "application/json",
 };
 
-export async function auth(){
+export async function uploadImage(file: File, name: string) {
+  const fileExt = file.name.split(".").pop();
+  const fileName = `${name + Math.floor(Math.random() * 1000)}.${fileExt}`;
+
+  const { error: uploadError } = await supabase.storage
+    .from("couples")
+    .upload(fileName, file, {
+      cacheControl: "3600",
+      upsert: false,
+    });
+
+  if (uploadError) throw uploadError;
+
+  const { data } = supabase.storage.from("couples").getPublicUrl(fileName);
+
+  return {
+    url: data.publicUrl,
+    path: fileName
+  };
+}
+
+export async function deleteImage(fileUrlOrPath: string, bucket: string = "couples") {
+  const marker = `/object/public/${bucket}/`;
+  const isFullUrl = fileUrlOrPath.includes(marker);
+  const filePath = isFullUrl
+    ? fileUrlOrPath.slice(fileUrlOrPath.indexOf(marker) + marker.length)
+    : fileUrlOrPath;
+
+  const { error } = await supabase.storage.from(bucket).remove([filePath]);
+  if (error) throw error;
+}
+
+export async function auth() {
   try {
     const req = await fetch("/api/v1/auth/token", {
       method: "POST",
       headers,
     });
     const data = await req.json();
-    if(!data.initialize) return { success: false, message: data.message};
+    if (!data.initialize) return { success: false, message: data.message };
     return data;
   } catch (error) {
-    return { success: false, message: handleError(error) }
+    return { success: false, message: handleError(error) };
   }
 }
 
@@ -88,30 +120,33 @@ export async function createLetter(
   }
 }
 
-export async function getLetter(id:string){
+export async function getLetter(id: string) {
   try {
     const req = await fetch(`/api/v1/kenshie/loveLetter?id=${id}`, {
       method: "GET",
-      headers
+      headers,
     });
     const data = await req.json();
-    if(!data.success) return { success: false, message: data.message};
+    if (!data.success) return { success: false, message: data.message };
     return data;
   } catch (error) {
-    return { success: false, message: handleError(error) }
+    return { success: false, message: handleError(error) };
   }
 }
 //end of loveLetter
 
 //serenade
-export async function searchSongs(title:string){
+export async function searchSongs(title: string) {
   try {
-    const req = await fetch(`https://jeextract.vercel.app/api/proxy?q=${title + "official Audio"}`);
+    const req = await fetch(
+      `https://jeextract.vercel.app/api/proxy?q=${title + "official Audio"}`,
+    );
     const data = await req.json();
-    if(data.length < 0) return { success: false, message: "No music was found"}
+    if (data.length < 0)
+      return { success: false, message: "No music was found" };
     return data;
   } catch (error) {
-    return { success: false, message: handleError(error) }
+    return { success: false, message: handleError(error) };
   }
 }
 export async function createSerenade(
@@ -128,7 +163,7 @@ export async function createSerenade(
         recipient,
         message,
         sender,
-        songId
+        songId,
       }),
     });
     const data = await req.json();
@@ -138,17 +173,17 @@ export async function createSerenade(
     return { success: false, message: handleError(error) };
   }
 }
-export async function getSerenade(id:string){
+export async function getSerenade(id: string) {
   try {
     const req = await fetch(`/api/v1/kenshie/serenade?id=${id}`, {
       method: "GET",
-      headers
+      headers,
     });
     const data = await req.json();
-    if(!data.success) return { success: false, message: data.message};
+    if (!data.success) return { success: false, message: data.message };
     return data;
   } catch (error) {
-    return { success: false, message: handleError(error) }
+    return { success: false, message: handleError(error) };
   }
 }
 //end of serenade
@@ -159,7 +194,7 @@ export async function createCapsule(
   sender: string,
   message: string,
   unlockDate: string,
-  unlockTime: string
+  unlockTime: string,
 ) {
   try {
     const req = await fetch("/api/v1/kenshie/lovecapsule", {
@@ -170,7 +205,7 @@ export async function createCapsule(
         sender,
         message,
         unlockDate,
-        unlockTime
+        unlockTime,
       }),
     });
     const data = await req.json();
@@ -180,17 +215,61 @@ export async function createCapsule(
     return { success: false, message: handleError(error) };
   }
 }
-export async function getCapsule(id:string){
+export async function getCapsule(id: string) {
   try {
     const req = await fetch(`/api/v1/kenshie/lovecapsule?id=${id}`, {
       method: "GET",
-      headers
+      headers,
+    });
+    const data = await req.json();
+    if (!data.success) return { success: false, message: data.message };
+    return data;
+  } catch (error) {
+    return { success: false, message: handleError(error) };
+  }
+}
+//end of loveCapsule
+
+//kenshie
+export async function createKenshie(
+  yourName: string,
+  theirName: string,
+  image: string,
+  beginning?: string,
+  firstImpression?: string,
+  firstMemorableMoment?: string,
+  littleThings?: string,
+  importantDate?: string,
+  challenge?: string,
+  realization?: string,
+  favoriteMemory?: string,
+  loveTruth?: string,
+  future?: string,
+) {
+  try {
+    const req = await fetch("/api/v1/kenshie/kenshie", {
+      method: "POST",
+      headers,
+      body: JSON.stringify({yourName, theirName, beginning, firstImpression, firstMemorableMoment, littleThings, importantDate, challenge, realization, favoriteMemory, loveTruth, future, image})
     });
     const data = await req.json();
     if(!data.success) return { success: false, message: data.message};
     return data;
   } catch (error) {
-    return { success: false, message: handleError(error) }
+    return { success: false, message: handleError(error) };
   }
 }
-//end of loveCapsule
+export async function getKenshie(id: string) {
+  try {
+    const req = await fetch(`/api/v1/kenshie/kenshie?id=${id}`, {
+      method: "GET",
+      headers,
+    });
+    const data = await req.json();
+    if (!data.success) return { success: false, message: data.message };
+    return data;
+  } catch (error) {
+    return { success: false, message: handleError(error) };
+  }
+}
+//end of kenshie
