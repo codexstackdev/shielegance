@@ -1,6 +1,6 @@
 "use client";
 
-import brand from "@/assets/brand.jpg";
+import brand from "@/assets/kenshieart.png";
 import { ArrowRight, Heart, Moon, Sparkles, Sun } from "lucide-react";
 import { motion } from "motion/react";
 import { useTheme } from "next-themes";
